@@ -1,73 +1,69 @@
-<<<<<<< HEAD
 "use client";
 
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { useRef } from "react";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "default" | "outline" | "ghost" | "neon";
-    size?: "default" | "sm" | "lg" | "icon";
+const buttonVariants = cva(
+    "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-50",
+    {
+        variants: {
+            variant: {
+                default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md",
+                destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+                outline: "border border-border bg-transparent hover:bg-secondary/50 text-foreground",
+                secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                ghost: "hover:bg-secondary/50 text-foreground",
+                link: "text-primary underline-offset-4 hover:underline",
+                neon: "border border-primary/50 text-primary bg-primary/5 hover:bg-primary/20 hover:border-primary hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all",
+            },
+            size: {
+                default: "h-10 px-6 py-2",
+                sm: "h-8 px-4 text-xs",
+                lg: "h-12 px-8 text-base",
+                icon: "h-10 w-10",
+            },
+        },
+        defaultVariants: {
+            variant: "default",
+            size: "default",
+        },
+    }
+);
+
+export interface ButtonProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
     magnetic?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = "default", size = "default", magnetic = false, children, ...props }, ref) => {
-        const defaultClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
-
-        const variants = {
-            default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-            outline: "border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
-            ghost: "hover:bg-accent hover:text-accent-foreground",
-            neon: "border border-primary text-primary bg-transparent neon-shadow hover:bg-primary hover:text-primary-foreground",
-        };
-
-        const sizes = {
-            default: "h-9 px-4 py-2",
-            sm: "h-8 rounded-md px-3 text-xs",
-            lg: "h-10 rounded-md px-8",
-            icon: "h-9 w-9",
-        };
-
-        const combinedClassName = cn(defaultClasses, variants[variant], sizes[size], className);
-
-        const x = useMotionValue(0);
-        const y = useMotionValue(0);
-
-        const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
-        const springX = useSpring(x, springConfig);
-        const springY = useSpring(y, springConfig);
+    ({ className, variant, size, magnetic = false, children, ...props }, ref) => {
+        const btnRef = useRef<HTMLButtonElement>(null);
 
         const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const hX = e.clientX - rect.left - rect.width / 2;
-            const hY = e.clientY - rect.top - rect.height / 2;
-            x.set(hX * 0.3);
-            y.set(hY * 0.3);
+            if (!magnetic || !btnRef.current) return;
+            const rect = btnRef.current.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            btnRef.current.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
         };
 
         const handleMouseLeave = () => {
-            x.set(0);
-            y.set(0);
+            if (!magnetic || !btnRef.current) return;
+            btnRef.current.style.transform = "translate(0px, 0px)";
+            btnRef.current.style.transition = "transform 0.4s ease";
         };
 
-        if (magnetic) {
-            return (
-                <motion.button
-                    ref={ref as any}
-                    className={combinedClassName}
-                    style={{ x: springX, y: springY }}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    {...(props as any)}
-                >
-                    {children}
-                </motion.button>
-            );
-        }
-
         return (
-            <button ref={ref} className={combinedClassName} {...props}>
+            <button
+                className={cn(buttonVariants({ variant, size, className }))}
+                ref={btnRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                {...props}
+            >
                 {children}
             </button>
         );
@@ -75,83 +71,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button };
-=======
-"use client";
-
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "default" | "outline" | "ghost" | "neon";
-    size?: "default" | "sm" | "lg" | "icon";
-    magnetic?: boolean;
-}
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = "default", size = "default", magnetic = false, children, ...props }, ref) => {
-        const defaultClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
-
-        const variants = {
-            default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-            outline: "border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
-            ghost: "hover:bg-accent hover:text-accent-foreground",
-            neon: "border border-primary text-primary bg-transparent neon-shadow hover:bg-primary hover:text-primary-foreground",
-        };
-
-        const sizes = {
-            default: "h-9 px-4 py-2",
-            sm: "h-8 rounded-md px-3 text-xs",
-            lg: "h-10 rounded-md px-8",
-            icon: "h-9 w-9",
-        };
-
-        const combinedClassName = cn(defaultClasses, variants[variant], sizes[size], className);
-
-        const x = useMotionValue(0);
-        const y = useMotionValue(0);
-
-        const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
-        const springX = useSpring(x, springConfig);
-        const springY = useSpring(y, springConfig);
-
-        const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const hX = e.clientX - rect.left - rect.width / 2;
-            const hY = e.clientY - rect.top - rect.height / 2;
-            x.set(hX * 0.3);
-            y.set(hY * 0.3);
-        };
-
-        const handleMouseLeave = () => {
-            x.set(0);
-            y.set(0);
-        };
-
-        if (magnetic) {
-            return (
-                <motion.button
-                    ref={ref as any}
-                    className={combinedClassName}
-                    style={{ x: springX, y: springY }}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    {...(props as any)}
-                >
-                    {children}
-                </motion.button>
-            );
-        }
-
-        return (
-            <button ref={ref} className={combinedClassName} {...props}>
-                {children}
-            </button>
-        );
-    }
-);
-Button.displayName = "Button";
-
-export { Button };
->>>>>>> 8ba124c8db0020263d7ec6e1526daedb37619614
+export { Button, buttonVariants };
