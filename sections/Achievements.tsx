@@ -9,7 +9,7 @@ const achievements = [
         title: "National Level Hackathon – 3rd Prize",
         description: "Secured 3rd place at the National Level Hackathon conducted at Velammal College of Engineering & Technology, Madurai for developing an innovative healthcare application.",
         image: "/achievements/achievement1.jpg",
-        date: "2023",
+        date: "27th Sep 2025",
     },
     {
         title: "Centum in Computer Science",
@@ -21,7 +21,7 @@ const achievements = [
         title: "Youth Indians Round Table",
         description: "Runner-up in the Accessibility & Health Talk organized by Youth Indians Round Table, showcasing strong communication and problem-solving skills.",
         image: "/achievements/achievement3.jpg",
-        date: "2022",
+        date: "10th October 2025",
     },
 ];
 
